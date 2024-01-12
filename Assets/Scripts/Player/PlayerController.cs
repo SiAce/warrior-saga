@@ -92,12 +92,14 @@ public class PlayerController : MonoBehaviour
     {
         rb.velocity = new Vector2(speed * moveDirection.x, rb.velocity.y);
 
-        sr.flipX = moveDirection.x switch
+        float faceDir = moveDirection.x switch
         {
-            > 0 => false,
-            < 0 => true,
-            _ => sr.flipX,
+            > 0 => 1,
+            < 0 => -1,
+            _ => transform.localScale.x,
         };
+
+        transform.localScale = new Vector3(faceDir, 1, 1);
 
     }
 
