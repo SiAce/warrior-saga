@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f333ce4d1f7e84d6d9959917d08aa332, type: 3}
+  m_Name: PortalForestBottomRight
+  m_EditorClassIdentifier: 
+  beforeInteractionSprite: {fileID: 0}
+  afterInteractionSprite: {fileID: 0}
+  interactionFXAudioClip: {fileID: 8300000, guid: a0ca8964c08d54c5dbebf245bdc474ca, type: 3}
+  interactionPromptAnimatorController: {fileID: 9100000, guid: 85d40693ac92041e4ac9b35205ba9f38, type: 2}
+  sceneToLoad: Cave
+  spawnPoint: {x: -5, y: -14, z: 0}
+  sceneType: 1
+  shouldFade: 1
+  sceneLoadEventSO: {fileID: 11400000, guid: 15a38b3fe9d69465282237428da849bd, type: 2}

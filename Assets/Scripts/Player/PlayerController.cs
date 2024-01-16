@@ -22,11 +22,14 @@ public class PlayerController : MonoBehaviour
     private PhysicsCheck physicsCheck;
     private PlayerAnimation playerAnimation;
     private Collider2D cl;
+
     private bool isHurt;
+    private bool isWallJumping;
+    private InteractableController interactable;
 
     private void Awake()
     {
-        
+
         rb = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
         physicsCheck = GetComponent<PhysicsCheck>();
@@ -35,6 +38,7 @@ public class PlayerController : MonoBehaviour
         inputControl = new PlayerInputControl();
         inputControl.Gameplay.Jump.started += Jump;
         inputControl.Gameplay.Attack.started += PlayerAttack;
+        inputControl.Gameplay.Interact.performed += Interact;
     }
 
     // Start is called before the first frame update
@@ -72,7 +76,11 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         ChangeMaterial();
-        if (!isHurt && !isAttacking)
+        if (physicsCheck.isGround)
+        {
+            isWallJumping = false;
+        }
+        if (!isHurt && !isAttacking && !isWallJumping)
         {
             Move();
         }
@@ -86,6 +94,22 @@ public class PlayerController : MonoBehaviour
     private void OnDisable()
     {
         inputControl.Disable();
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Interactable"))
+        {
+            interactable = collision.GetComponent<InteractableController>();
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Interactable"))
+        {
+            interactable = null;
+        }
     }
 
     private void Move()
@@ -105,17 +129,45 @@ public class PlayerController : MonoBehaviour
 
     private void Jump(InputAction.CallbackContext context)
     {
-        if (!physicsCheck.isGround) { return; }
-        rb.AddForce(
+        if (physicsCheck.touchLeftWall)
+        {
+            rb.velocity = new Vector2(8, 17);
+            isWallJumping = true;
+            return;
+        }
+
+        if (physicsCheck.touchRightWall)
+        {
+            rb.velocity = new Vector2(-8, 17);
+            isWallJumping = true;
+            return;
+        }
+        if (physicsCheck.isGround)
+        {
+            rb.AddForce(
             jumpForce * Vector2.up,
             ForceMode2D.Impulse
             );
+            return;
+        }
+
+
+
     }
 
     private void PlayerAttack(InputAction.CallbackContext context)
     {
         playerAnimation.PlayerAttack();
     }
+
+    private void Interact(InputAction.CallbackContext context)
+    {
+        if (interactable)
+        {
+            interactable.OnInteraction();
+        }
+    }
+
 
     private void ChangeMaterial()
     {

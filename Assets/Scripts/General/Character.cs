@@ -11,6 +11,7 @@ public class Character : MonoBehaviour
 
     public UnityEvent<Transform> OnTakeDamage;
     public UnityEvent OnDeath;
+    public UnityEvent<float> OnHealthChange;
 
     private bool invincible;
 
@@ -21,10 +22,14 @@ public class Character : MonoBehaviour
         invincible = false;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        
+        if (collision.CompareTag("Pit"))
+        {
+            currentHealth = 0;
+            OnHealthChange?.Invoke(0);
+            OnDeath?.Invoke();
+        }
     }
 
     public void TakeDemage(Attack attacker)
@@ -33,9 +38,12 @@ public class Character : MonoBehaviour
 
         currentHealth = Mathf.Max(currentHealth - attacker.damage, 0);
 
+        OnHealthChange?.Invoke(currentHealth / maxHealth);
+
         if (currentHealth <= 0)
         {
             OnDeath?.Invoke();
+            invincible = true;
         }
         else
         {

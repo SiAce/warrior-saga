@@ -4,19 +4,28 @@ public class BoarPatrolState : BaseState
 {
     public override void OnEnter(Enemy enemy)
     {
-        currentEnemy = enemy;
+        base.enemy = enemy;
+        enemy.animator.SetInteger("moveType", 1);
+        enemy.currentSpeed = enemy.patrolSpeed;
     }
 
     public override void OnExit()
     {
-        throw new System.NotImplementedException();
+        enemy.StopAllCoroutines();
+        enemy.isHurt = false;
+        enemy.isWaiting = false;
     }
 
     public override void LogicUpdate()
     {
-        if (!currentEnemy.physicsCheck.isGround || currentEnemy.physicsCheck.touchLeftWall || currentEnemy.physicsCheck.touchRightWall)
+        if (enemy.sightDetection.InSight(enemy.FaceDir))
         {
-            currentEnemy.StartCoroutine(currentEnemy.TurnAndWait());
+            enemy.ChangeState(enemy.chaseState);
+        };
+
+        if (!enemy.physicsCheck.isGround || enemy.physicsCheck.touchLeftWall || enemy.physicsCheck.touchRightWall)
+        {
+            enemy.StartCoroutine(enemy.TurnAndWait(enemy.patrolWaitTime));
         }
     }
 

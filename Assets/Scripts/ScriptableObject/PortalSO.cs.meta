@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: f333ce4d1f7e84d6d9959917d08aa332
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - beforeInteractionSprite: {instanceID: 0}
+  - afterInteractionSprite: {instanceID: 0}
+  - interactionFXAudioClip: {fileID: 8300000, guid: a0ca8964c08d54c5dbebf245bdc474ca, type: 3}
+  - interactionPromptAnimatorController: {fileID: 9100000, guid: 85d40693ac92041e4ac9b35205ba9f38, type: 2}
+  - sceneLoadEventSO: {fileID: 11400000, guid: 15a38b3fe9d69465282237428da849bd, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

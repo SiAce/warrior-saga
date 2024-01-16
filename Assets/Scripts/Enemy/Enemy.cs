@@ -1,12 +1,17 @@
 using System.Collections;
-using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    public float normalSpeed;
-    public float chaseSpeed;
     public float currentSpeed;
+
+    public float chaseSpeed;
+    public float chaseWaitTime = 0;
+    
+    public float patrolSpeed;
+    public float patrolWaitTime = 2;
+
     public float hurtForce;
 
     public Vector3 FaceDir
@@ -18,32 +23,29 @@ public class Enemy : MonoBehaviour
     Rigidbody2D rb;
     public Animator animator;
     public PhysicsCheck physicsCheck;
+    public SightDetection sightDetection;
 
-    float waitTime = 2;
-    bool isWaiting;
-
-    bool isHurt;
+    
+    public bool isWaiting;
+    public bool isHurt;
     bool isDead;
 
-    protected BaseState patrolState;
-    protected BaseState chaseState;
+    public BaseState patrolState;
+    public BaseState chaseState;
 
     private BaseState currentState;
-
-    private Transform attackerTransform;
 
     protected virtual void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         physicsCheck = GetComponent<PhysicsCheck>();
-        currentSpeed = normalSpeed;
+        sightDetection = GetComponent<SightDetection>();
     }
 
     private void OnEnable()
     {
-        currentState = patrolState;
-        currentState.OnEnter(this);
+        ChangeState(patrolState);
     }
 
     private void OnDisable()
@@ -56,7 +58,7 @@ public class Enemy : MonoBehaviour
         currentState.LogicUpdate();
     }
 
-    public IEnumerator TurnAndWait()
+    public IEnumerator TurnAndWait(float waitTime, int preMoveType=1)
     {
         TurnAround();
 
@@ -64,6 +66,7 @@ public class Enemy : MonoBehaviour
         animator.SetInteger("moveType", 0);
         rb.velocity = new Vector2(0, 0);
         yield return new WaitForSeconds(waitTime);
+        animator.SetInteger("moveType", preMoveType);
         isWaiting = false;
     }
 
@@ -87,8 +90,6 @@ public class Enemy : MonoBehaviour
 
     public void onHurt(Transform attackerTransform)
     {
-        this.attackerTransform = attackerTransform;
-
         Vector2 attackDir = new Vector2(transform.position.x - attackerTransform.position.x, 0).normalized;
 
         StartCoroutine(OnKnockBack(attackDir));
@@ -122,5 +123,15 @@ public class Enemy : MonoBehaviour
     public void DestroyAfterAnimation()
     {
         Destroy(this.gameObject);
+    }
+
+    public void ChangeState(BaseState newState)
+    {
+        if (currentState != null)
+        {
+            currentState.OnExit();
+        }
+        currentState = newState;
+        currentState.OnEnter(this);
     }
 }
